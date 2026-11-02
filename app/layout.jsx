@@ -1,5 +1,6 @@
 import "./globals.css";
 import CartProviderShell from "@/components/CartProviderShell";
+export const viewport = { width: "device-width", initialScale: 1, viewportFit: "cover" };
 export const metadata = {
   title: "DUM & CO. | Awadhi comfort, delivered",
   description: "Slow-cooked biryani, smoky kebabs and timeless Awadhi comfort. Explore the DUM & CO. menu.",
