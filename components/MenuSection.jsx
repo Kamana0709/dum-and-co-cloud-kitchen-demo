@@ -1,5 +1,5 @@
 "use client";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Plus, Search } from "lucide-react";
 import { categories, menuItems } from "@/data/menu";
 import { useCart } from "@/context/CartContext";
@@ -7,12 +7,14 @@ import { useCart } from "@/context/CartContext";
 export default function MenuSection() {
   const [active, setActive] = useState("All");
   const [query, setQuery] = useState("");
+  const [menuSettings, setMenuSettings] = useState({});
+  useEffect(() => { try { setMenuSettings(JSON.parse(localStorage.getItem("dum-co-menu-settings") || "{}")); } catch {} }, []);
   const { addItem, count, subtotal } = useCart();
   const filtered = useMemo(() => menuItems.filter(item => {
-    const categoryMatch = active === "All" || item.category === active;
+    const categoryMatch = (active === "All" || item.category === active) && menuSettings[item.id] !== false;
     const searchMatch = `${item.name} ${item.description}`.toLowerCase().includes(query.toLowerCase());
     return categoryMatch && searchMatch;
-  }), [active, query]);
+  }), [active, query, menuSettings]);
 
   return <section className="menu-section section-wrap" id="menu">
     <div className="section-heading"><div><p className="eyebrow">MADE WITH TIME. SERVED WITH SOUL.</p><h2>A menu worth<br/><em>slowing down for.</em></h2></div><p className="section-intro">From the first crackle of the tadka to the last grain of basmati — every detail has a little more love in it.</p></div>
