@@ -13,7 +13,7 @@ const ORDER_KEY = "dum-co-demo-orders";
 const MENU_KEY = "dum-co-menu-settings";
 const statuses = ["New", "Preparing", "Ready", "Completed", "Cancelled"];
 const seedOrders = [
-  { reference: "DUM28491", name: "Aarav Sharma", phone: "9876543210", address: "Unit 4, Bhubaneswar", payment: "UPI", total: 578, status: "New", createdAt: "Today, 12:42 PM", items: [{ name: "Old Lucknow Chicken Biryani", quantity: 2 }, { name: "Shahi Tukda", quantity: 0 }] },
+  { reference: "DUM28491", name: "Aarav Sharma", phone: "9876543210", address: "Unit 4, Bhubaneswar", payment: "UPI", total: 578, status: "New", createdAt: "Today, 12:42 PM", items: [{ name: "Old Lucknow Chicken Biryani", quantity: 2 }] },
   { reference: "DUM28490", name: "Priya Das", phone: "9861234567", address: "Saheed Nagar, Bhubaneswar", payment: "Cash on delivery", total: 329, status: "Preparing", createdAt: "Today, 12:31 PM", items: [{ name: "Mutton Galouti Kebab", quantity: 1 }] },
   { reference: "DUM28489", name: "Rohan Patnaik", phone: "9437123456", address: "Patia, Bhubaneswar", payment: "UPI", total: 478, status: "Ready", createdAt: "Today, 12:18 PM", items: [{ name: "Subz Dum Biryani", quantity: 1 }, { name: "Angara Paneer Tikka", quantity: 1 }] },
   { reference: "DUM28488", name: "Ananya Mohanty", phone: "9778123456", address: "Khandagiri, Bhubaneswar", payment: "UPI", total: 289, status: "Completed", createdAt: "Today, 11:54 AM", items: [{ name: "Old Lucknow Chicken Biryani", quantity: 1 }] },
@@ -37,7 +37,8 @@ export default function DashboardPage() {
     try {
       const savedOrders = JSON.parse(localStorage.getItem(ORDER_KEY) || "null");
       setOrders(Array.isArray(savedOrders) ? savedOrders : seedOrders);
-      const savedMenu = JSON.parse(localStorage.getItem(MENU_KEY) || "{}");\n      setMenuSettings(savedMenu && typeof savedMenu === "object" && !Array.isArray(savedMenu) ? savedMenu : {});
+      const savedMenu = JSON.parse(localStorage.getItem(MENU_KEY) || "{}");
+      setMenuSettings(savedMenu && typeof savedMenu === "object" && !Array.isArray(savedMenu) ? savedMenu : {});
     } catch {
       setOrders(seedOrders);
     }
