@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ArrowLeft, Minus, Plus, ShoppingBag } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 
@@ -8,6 +8,8 @@ export default function ProductConfigurator({ item }) {
   const [spice, setSpice] = useState("Medium");
   const [quantity, setQuantity] = useState(1);
   const [note, setNote] = useState("");
+  const [available, setAvailable] = useState(true);
+  useEffect(() => { try { const settings = JSON.parse(localStorage.getItem("dum-co-menu-settings") || "{}"); setAvailable(settings[item.id] !== false); } catch {} }, [item.id]);
   const { addItem } = useCart();
   const extraPrice = portion === "Large" ? 80 : portion === "Half" ? -60 : 0;
   const add = () => {
@@ -21,7 +23,7 @@ export default function ProductConfigurator({ item }) {
         <div className="option-group"><b>Choose your portion</b><div className="option-pills">{["Half","Regular","Large"].map(value => <button key={value} className={portion === value ? "option-pill selected" : "option-pill"} onClick={() => setPortion(value)}>{value}{value === "Large" ? " +₹80" : value === "Half" ? " -₹60" : ""}</button>)}</div></div>
         <div className="option-group"><b>Spice level</b><div className="option-pills">{["Mild","Medium","Hot"].map(value => <button key={value} className={spice === value ? "option-pill selected" : "option-pill"} onClick={() => setSpice(value)}>{value}</button>)}</div></div>
         <label className="special-note">Special instructions <span className="optional">(optional)</span><textarea rows={2} value={note} onChange={event => setNote(event.target.value)} placeholder="Any little requests for our kitchen?"/></label>
-        <div className="product-buy"><div className="quantity-control"><button onClick={() => setQuantity(Math.max(1, quantity - 1))} aria-label="Decrease quantity"><Minus size={14}/></button><b>{quantity}</b><button onClick={() => setQuantity(quantity + 1)} aria-label="Increase quantity"><Plus size={14}/></button></div><button className="button-primary" onClick={add}><ShoppingBag size={16}/> Add · ₹{(item.price + extraPrice) * quantity}</button></div>
+        <div className="product-buy"><div className="quantity-control"><button onClick={() => setQuantity(Math.max(1, quantity - 1))} aria-label="Decrease quantity"><Minus size={14}/></button><b>{quantity}</b><button onClick={() => setQuantity(quantity + 1)} aria-label="Increase quantity"><Plus size={14}/></button></div><button className="button-primary" onClick={add} disabled={!available}><ShoppingBag size={16}/> {available ? `Add · ₹${(item.price + extraPrice) * quantity}` : "Currently unavailable"}</button></div>
       </div>
     </div>
   </section>;
