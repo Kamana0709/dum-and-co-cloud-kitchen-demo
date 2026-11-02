@@ -15,8 +15,22 @@ export function CartProvider({ children }) {
       if (saved) {
         const parsed = JSON.parse(saved);
         if (Array.isArray(parsed)) {
-          itemsRef.current = parsed;
-          setItems(parsed);
+          const safeItems = parsed.filter(item =>
+            item && typeof item.key === "string" &&
+            typeof item.id === "string" &&
+            typeof item.name === "string" &&
+            Number.isFinite(Number(item.price)) && Number(item.price) >= 0 &&
+            Number.isFinite(Number(item.quantity)) && Number(item.quantity) > 0
+          ).map(item => ({
+            ...item,
+            price: Number(item.price),
+            quantity: Math.min(99, Math.floor(Number(item.quantity))),
+            portion: typeof item.portion === "string" ? item.portion : "Regular",
+            spice: typeof item.spice === "string" ? item.spice : "Medium",
+            note: typeof item.note === "string" ? item.note.slice(0, 300) : ""
+          }));
+          itemsRef.current = safeItems;
+          setItems(safeItems);
         }
       }
     } catch {
@@ -38,6 +52,7 @@ export function CartProvider({ children }) {
   };
 
   const addItem = (product, options = {}, quantity = 1) => {
+    const safeQuantity = Math.min(99, Math.max(1, Math.floor(Number(quantity) || 1)));
     const portion = options.portion || "Regular";
     const spice = options.spice || "Medium";
     const key = [product.id, portion, spice, options.note || ""].join("-");
@@ -51,7 +66,7 @@ export function CartProvider({ children }) {
           name: product.name,
           price: product.price + (options.extraPrice || 0),
           image: product.image,
-          quantity,
+          quantity: safeQuantity,
           portion,
           spice,
           note: options.note || ""
@@ -60,10 +75,11 @@ export function CartProvider({ children }) {
   };
 
   const updateQuantity = (key, quantity) => {
+    const safeQuantity = Math.min(99, Math.floor(Number(quantity) || 0));
     const current = itemsRef.current;
-    const nextItems = quantity <= 0
+    const nextItems = safeQuantity <= 0
       ? current.filter(item => item.key !== key)
-      : current.map(item => item.key === key ? { ...item, quantity } : item);
+      : current.map(item => item.key === key ? { ...item, quantity: safeQuantity } : item);
     persistItems(nextItems);
   };
 
