@@ -30,8 +30,10 @@ export default function DashboardPage() {
   const [query, setQuery] = useState("");
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [ready, setReady] = useState(false);
+  const [todayLabel, setTodayLabel] = useState("TODAY");
 
   useEffect(() => {
+    setTodayLabel(new Intl.DateTimeFormat("en-IN", { weekday: "long", day: "2-digit", month: "long", year: "numeric" }).format(new Date()).toUpperCase());
     try {
       const savedOrders = JSON.parse(localStorage.getItem(ORDER_KEY) || "null");
       setOrders(Array.isArray(savedOrders) ? savedOrders : seedOrders);
@@ -44,8 +46,10 @@ export default function DashboardPage() {
 
   useEffect(() => {
     if (ready) {
-      localStorage.setItem(ORDER_KEY, JSON.stringify(orders));
-      localStorage.setItem(MENU_KEY, JSON.stringify(menuSettings));
+      try {
+        localStorage.setItem(ORDER_KEY, JSON.stringify(orders));
+        localStorage.setItem(MENU_KEY, JSON.stringify(menuSettings));
+      } catch { /* Keep the dashboard usable when browser storage is unavailable. */ }
     }
   }, [orders, menuSettings, ready]);
 
@@ -78,10 +82,10 @@ export default function DashboardPage() {
     </aside>
 
     <section className="dashboard-main">
-      <header className="dashboard-topbar"><div className="mobile-dash-brand"><span className="wordmark-mark">D</span><b>DUM & CO.</b></div><div className="breadcrumb">Workspace <span>/</span> {section}</div><div className="topbar-actions"><span className="topbar-date">MON, 02 NOV 2026</span><button className="icon-button" aria-label="Notifications"><Bell size={17}/><i/></button><span className="topbar-avatar">AK</span></div></header>
+      <header className="dashboard-topbar"><div className="mobile-dash-brand"><span className="wordmark-mark">D</span><b>DUM & CO.</b></div><div className="breadcrumb">Workspace <span>/</span> {section}</div><div className="topbar-actions"><span className="topbar-date">{todayLabel}</span><button className="icon-button" aria-label="Notifications"><Bell size={17}/><i/></button><span className="topbar-avatar">AK</span></div></header>
 
       <nav className="mobile-dashboard-nav" aria-label="Dashboard sections">{nav.map(item => <button key={item.label} className={section === item.label ? "active" : ""} onClick={() => { setSection(item.label); setSelectedOrder(null); }}><item.icon size={15}/><span>{item.label}</span></button>)}</nav>\n      <div className="dashboard-content">
-        <div className="dashboard-heading"><div><p className="eyebrow">MONDAY, 02 NOVEMBER 2026</p><h1>{section === "Overview" ? <>Good afternoon, <em>Chef.</em></> : section === "Orders" ? <>Order <em>management.</em></> : section === "Menu" ? <>Your <em>menu.</em></> : <>Kitchen <em>performance.</em></>}</h1><p>{section === "Overview" ? "Here's what's happening in your kitchen today." : section === "Orders" ? "Track every ticket from first tap to final handoff." : section === "Menu" ? "Keep your best dishes available and your menu up to date." : "A quick look at your demo kitchen's performance."}</p></div><div className="dashboard-heading-actions"><span className="live-chip"><i/> LIVE DEMO</span><button className="dashboard-primary" onClick={() => setSection("Orders")}><Plus size={16}/> View orders</button></div></div>
+        <div className="dashboard-heading"><div><p className="eyebrow">{todayLabel}</p><h1>{section === "Overview" ? <>Good afternoon, <em>Chef.</em></> : section === "Orders" ? <>Order <em>management.</em></> : section === "Menu" ? <>Your <em>menu.</em></> : <>Kitchen <em>performance.</em></>}</h1><p>{section === "Overview" ? "Here's what's happening in your kitchen today." : section === "Orders" ? "Track every ticket from first tap to final handoff." : section === "Menu" ? "Keep your best dishes available and your menu up to date." : "A quick look at your demo kitchen's performance."}</p></div><div className="dashboard-heading-actions"><span className="live-chip"><i/> LIVE DEMO</span><button className="dashboard-primary" onClick={() => setSection("Orders")}><Plus size={16}/> View orders</button></div></div>
 
         {section === "Overview" && <>
           <div className="metric-grid">
