@@ -14,8 +14,12 @@ export default function CheckoutPage() {
     event.preventDefault();
     if (!items.length) return setError("Your cart is empty. Add something delicious first.");
     if (!/^[6-9]\d{9}$/.test(form.phone)) return setError("Enter a valid 10-digit Indian mobile number.");
-    const order = { ...form, items, total, reference: `DUM${Date.now().toString().slice(-6)}` };
+    const order = { ...form, items, total, reference: `DUM${Date.now().toString().slice(-6)}`, status: "New", createdAt: new Date().toLocaleString("en-IN", { weekday: "short", hour: "numeric", minute: "2-digit" }) };
     sessionStorage.setItem("dum-co-demo-order", JSON.stringify(order));
+    try {
+      const existing = JSON.parse(localStorage.getItem("dum-co-demo-orders") || "[]");
+      localStorage.setItem("dum-co-demo-orders", JSON.stringify([order, ...(Array.isArray(existing) ? existing : [])]));
+    } catch {}
     window.location.href = "/order-success";
   };
   return <main><Header/><section className="checkout-page"><a className="back-link" href="/cart"><ArrowLeft size={15}/> Back to cart</a>
