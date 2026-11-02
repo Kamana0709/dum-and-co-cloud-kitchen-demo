@@ -11,7 +11,7 @@ export default function ProductConfigurator({ item }) {
   const { addItem } = useCart();
   const extraPrice = portion === "Large" ? 80 : portion === "Half" ? -60 : 0;
   const add = () => {
-    for (let i = 0; i < quantity; i++) addItem(item, { portion, spice, extraPrice, note });
+    addItem(item, { portion, spice, extraPrice, note }, quantity);
     window.location.href = "/cart";
   };
   return <section className="product-page">
