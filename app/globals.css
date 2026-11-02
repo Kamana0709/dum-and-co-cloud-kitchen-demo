@@ -66,3 +66,15 @@ h1,h2{font-family:var(--serif);font-weight:500;letter-spacing:-.055em}h1{font-si
 @media(max-width:390px){.metric-grid{grid-template-columns:1fr 1fr}.metric-card>strong{font-size:21px}.manage-menu-item{gap:8px}.manage-menu-item>img{width:49px;height:49px}.availability-toggle{padding:7px 6px}.manage-menu-copy b{font-size:11px}}
 
 .product-buy .button-primary:disabled{opacity:.55;cursor:not-allowed;background:#89847a}
+
+/* Hero artwork alignment: keep the photograph centered inside its arch */
+.hero-image{width:86%;margin:0 auto}
+.hero-visual:before{inset:24px 7% 0}
+.hero-image img{object-position:center center}
+@media(max-width:760px){
+  .hero-visual{width:100%;height:clamp(310px,94vw,390px);margin:0 auto 15px}
+  .hero-image{width:88%;margin:0 auto}
+  .hero-visual:before{inset:22px 6% 0}
+  .hero-stamp{right:0;top:12%}
+  .hero-note{left:0;bottom:7%}
+}
