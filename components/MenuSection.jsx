@@ -8,7 +8,17 @@ export default function MenuSection() {
   const [active, setActive] = useState("All");
   const [query, setQuery] = useState("");
   const [menuSettings, setMenuSettings] = useState({});
-  useEffect(() => { try { const saved = JSON.parse(localStorage.getItem("dum-co-menu-settings") || "{}"); setMenuSettings(saved && typeof saved === "object" && !Array.isArray(saved) ? saved : {}); } catch { setMenuSettings({}); } }, []);
+  useEffect(() => {
+    const readSettings = () => {
+      try {
+        const saved = JSON.parse(localStorage.getItem("dum-co-menu-settings") || "{}");
+        setMenuSettings(saved && typeof saved === "object" && !Array.isArray(saved) ? saved : {});
+      } catch { setMenuSettings({}); }
+    };
+    readSettings();
+    window.addEventListener("storage", readSettings);
+    return () => window.removeEventListener("storage", readSettings);
+  }, []);
   const { addItem, count, subtotal } = useCart();
   const filtered = useMemo(() => menuItems.filter(item => {
     const categoryMatch = (active === "All" || item.category === active) && menuSettings[item.id] !== false;
