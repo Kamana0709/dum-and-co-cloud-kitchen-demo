@@ -59,7 +59,7 @@ export function CartProvider({ children }) {
     const current = itemsRef.current;
     const existing = current.find(item => item.key === key);
     const nextItems = existing
-      ? current.map(item => item.key === key ? { ...item, quantity: item.quantity + quantity } : item)
+      ? current.map(item => item.key === key ? { ...item, quantity: Math.min(99, item.quantity + safeQuantity) } : item)
       : [...current, {
           key,
           id: product.id,
